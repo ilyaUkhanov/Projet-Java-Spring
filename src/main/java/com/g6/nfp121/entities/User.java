@@ -44,9 +44,6 @@ public class User {
     @NotBlank
     private String password;
 
-    @Lob
-    private byte[] avatar;
-
     public User() {}
 
     public User(String name, String firstName, String email) {

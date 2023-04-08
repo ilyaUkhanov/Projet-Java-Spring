@@ -126,7 +126,6 @@ public class APIContactController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") Long id) throws ApiIdNotFoundException {
-
         Contact contact = contactService.findContact(id);
         Long idDeleted = contactService.delete(contact);
         String message = "Contact [id: " + idDeleted + "] supprimé avec succès";

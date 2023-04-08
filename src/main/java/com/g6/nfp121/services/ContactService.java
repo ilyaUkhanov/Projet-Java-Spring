@@ -1,5 +1,7 @@
 package com.g6.nfp121.services;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +18,11 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
+import javax.annotation.PostConstruct;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 @RequiredArgsConstructor
 @Service
 public class ContactService implements ContactServiceI {
@@ -24,9 +31,23 @@ public class ContactService implements ContactServiceI {
     private final AddressService addressService;
     private final AddressRepository addressRepository;
 
+    private JAXBContext context;
+    private final String filesFolder = "/home/camelya/IdeaProjects/spring-jaxb/src/main/resources/files";
+    private final String filename = "Book1.xml";
+
+    @PostConstruct
+    void init() throws JAXBException {
+        context = JAXBContext.newInstance(Contact.class);
+    }
+
     public Contact findContact(Long id) throws ApiIdNotFoundException {
         return contactRepository.findById(id).orElseThrow(() -> new ApiIdNotFoundException("Contact", id));
     }
+
+    public List<Contact> getAllContacts() {
+        return contactRepository.findAll();
+    }
+
 
     public void deleteContact(Long id) throws ApiIdNotFoundException {
 
@@ -47,8 +68,7 @@ public class ContactService implements ContactServiceI {
             addresses = addressRepository.findAllById(addressesIDs);
         }
         Contact contact = ContactFactory.create(contactCreateModel, addresses);
-
-        return contact;
+        return contactRepository.save(contact);
     }
 
     public Contact updateContact(Contact contact, ContactUpdateModel contactUpdateModel) {
@@ -81,5 +101,23 @@ public class ContactService implements ContactServiceI {
         contactRepository.delete(contact);
 
         return id;
+    }
+
+    public void createXml(Contact contact) {
+        try {
+            Marshaller mar = context.createMarshaller();
+            mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            Path dir = Path.of("classpath:/xml/");
+            Path pathToFile = dir.resolve((contact.getFirstname() + "_" + contact.getLastname()).concat(".xml"));
+
+            if (Files.notExists(pathToFile)) {
+                Files.createDirectories(dir);
+                Files.createFile(pathToFile);
+            }
+            mar.marshal(contact, pathToFile.toFile());
+        } catch (Exception e) {
+            throw new RuntimeException("Can't write the file");
+        }
     }
 }

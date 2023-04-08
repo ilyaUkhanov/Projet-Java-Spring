@@ -11,7 +11,6 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 public class Contact {
-
     public Contact() {
         this.addresses = new ArrayList<>();
     }

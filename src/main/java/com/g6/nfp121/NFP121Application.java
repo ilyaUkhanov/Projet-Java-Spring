@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
@@ -39,9 +40,15 @@ public class NFP121Application {
 	public SpringResourceTemplateResolver thymeleafTemplateResolver() {
 		SpringResourceTemplateResolver templateResolver
 				= new SpringResourceTemplateResolver();
-		templateResolver.setPrefix("/WEB-INF/views/");
+		templateResolver.setPrefix("classpath:/templates/");
 		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
 		return templateResolver;
+	}
+
+	@Bean
+	public ThymeleafViewResolver thymeleafViewResolver() {
+		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+		viewResolver.setTemplateEngine(templateEngine());
+		return viewResolver;
 	}
 }

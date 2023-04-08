@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+  backend:
+    image: nfp121:0.0.1-SNAPSHOT
+    container_name: nfp121
+    environment:
+      - DATABASE_URL=jdbc:mysql://localhost:3306/nfp121
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"

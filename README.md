@@ -1,4 +1,4 @@
-# NFP 121
+# Projet Java Spring
 
 ## Structure du Projet
 
